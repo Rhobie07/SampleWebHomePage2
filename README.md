@@ -24,6 +24,20 @@ python3 -m http.server 8081 --directory build/web
 
 Deploy the contents of `build/web/` to a static host. The build bundles its renderer, fonts, and photography locally. There is no separate web frontend or backend service.
 
+## GitHub Pages
+
+Website: **https://rhobie07.github.io/SampleWebHomePage2/**
+
+The repository uses GitHub Actions as its Pages publishing source. The workflow in `.github/workflows/github-pages.yml` deploys automatically after a push to `main`; it can also be started from **Actions → Deploy Flutter web to GitHub Pages → Run workflow**.
+
+- CI uses the verified Flutter **3.44.7 / Dart 3.12.2** toolchain, resolves the committed lockfile, and runs static analysis before building.
+- The build reads the Pages base path and passes it to `flutter build web --base-href`, so scripts, fonts, and images load under `/SampleWebHomePage2/`.
+- Only `build/web/` is published. Do not commit generated build output.
+- Deployment uses GitHub’s automatic workflow token and scoped Pages permissions. No personal access token or additional repository secrets are required.
+- GitHub Pages hosting and GitHub-hosted Actions are free for this public repository.
+
+To publish an update, commit the changes and push to `main`, then check the [deployment workflow](https://github.com/Rhobie07/SampleWebHomePage2/actions/workflows/github-pages.yml).
+
 ## Structure
 
 ```text
