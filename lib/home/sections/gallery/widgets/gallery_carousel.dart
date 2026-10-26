@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:marci_metzger_homes/home/sections/gallery/gallery_photos.dart';
 import 'package:marci_metzger_homes/home/sections/gallery/widgets/gallery_lightbox.dart';
 import 'package:marci_metzger_homes/home/sections/gallery/widgets/gallery_photo_tile.dart';
+import 'package:marci_metzger_homes/home/sections/gallery/widgets/gallery_pagination.dart';
 import 'package:marci_metzger_homes/shared/animation/motion.dart';
 import 'package:marci_metzger_homes/shared/theme/app_colors.dart';
 
@@ -47,6 +49,19 @@ class _CarouselViewportState extends State<_CarouselViewport>
   static const _interval = Duration(seconds: 10);
   static const _transition = Duration(milliseconds: 650);
   static final _photoCount = galleryPhotos.length;
+  static final _pauseAction = CustomSemanticsAction(
+    label: 'Pause automatic slideshow',
+  );
+  static final _resumeAction = CustomSemanticsAction(
+    label: 'Resume automatic slideshow',
+  );
+
+  late final _pauseActions = <CustomSemanticsAction, VoidCallback>{
+    _pauseAction: _togglePlayback,
+  };
+  late final _resumeActions = <CustomSemanticsAction, VoidCallback>{
+    _resumeAction: _togglePlayback,
+  };
 
   late PageController _controller;
   int _selectedPage = _photoCount;
@@ -119,6 +134,16 @@ class _CarouselViewportState extends State<_CarouselViewport>
     if (_canAutoplay) {
       _timer ??= Timer.periodic(_interval, (_) => _move(1, automatic: true));
     }
+  }
+
+  void _selectPhoto(int index) {
+    var distance = (index - _photoIndex) % _photoCount;
+    if (distance > _photoCount ~/ 2) distance -= _photoCount;
+    if (distance == 0) {
+      _syncTimer(restart: true);
+      return;
+    }
+    _move(distance);
   }
 
   Future<void> _move(int direction, {bool automatic = false}) async {
@@ -194,6 +219,7 @@ class _CarouselViewportState extends State<_CarouselViewport>
   }
 
   void _togglePlayback() {
+    if (_reducedMotion) return;
     setState(() => _isPlaying = !_isPlaying);
     _syncTimer();
   }
@@ -212,144 +238,116 @@ class _CarouselViewportState extends State<_CarouselViewport>
       bindings: {
         const SingleActivator(LogicalKeyboardKey.arrowLeft): () => _move(-1),
         const SingleActivator(LogicalKeyboardKey.arrowRight): () => _move(1),
+        if (!_reducedMotion)
+          const SingleActivator(
+            LogicalKeyboardKey.space,
+            includeRepeats: false,
+          ): _togglePlayback,
       },
-      child: Focus(
-        child: Column(
-          children: [
-            SizedBox(
-              height: widget.height,
-              child: Stack(
-                clipBehavior: Clip.none,
-                fit: StackFit.expand,
-                children: [
-                  NotificationListener<ScrollNotification>(
-                    onNotification: _handleScroll,
-                    child: PageView.builder(
-                      controller: _controller,
-                      itemCount: _photoCount * 3,
-                      allowImplicitScrolling: true,
-                      onPageChanged: (page) =>
-                          setState(() => _selectedPage = page),
-                      itemBuilder: (context, page) {
-                        return AnimatedBuilder(
-                          animation: _controller,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Semantics(
-                              selected: page == _selectedPage,
-                              child: RepaintBoundary(
-                                child: GalleryPhotoTile(
-                                  index: page % _photoCount,
-                                  onOpen: () => _openPhoto(page % _photoCount),
+      child: Semantics(
+        container: true,
+        label: 'Property photo carousel',
+        value:
+            'Photo ${_photoIndex + 1} of $_photoCount. '
+            '${_isPlaying && !_reducedMotion ? 'Autoplay on' : 'Autoplay off'}.',
+        hint: _reducedMotion
+            ? 'Automatic playback is off for reduced motion. '
+                  'Use arrow keys or the photo bars to browse.'
+            : 'Use arrow keys to browse. '
+                  'Press Space to pause or resume automatic playback.',
+        customSemanticsActions: _reducedMotion
+            ? null
+            : _isPlaying
+            ? _pauseActions
+            : _resumeActions,
+        child: Focus(
+          child: Column(
+            children: [
+              SizedBox(
+                height: widget.height,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  fit: StackFit.expand,
+                  children: [
+                    NotificationListener<ScrollNotification>(
+                      onNotification: _handleScroll,
+                      child: PageView.builder(
+                        controller: _controller,
+                        itemCount: _photoCount * 3,
+                        allowImplicitScrolling: true,
+                        onPageChanged: (page) =>
+                            setState(() => _selectedPage = page),
+                        itemBuilder: (context, page) {
+                          return AnimatedBuilder(
+                            animation: _controller,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              child: Semantics(
+                                selected: page == _selectedPage,
+                                child: RepaintBoundary(
+                                  child: GalleryPhotoTile(
+                                    index: page % _photoCount,
+                                    onOpen: () =>
+                                        _openPhoto(page % _photoCount),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          builder: (context, child) {
-                            final position =
-                                _controller.hasClients &&
-                                    _controller.position.hasContentDimensions
-                                ? _controller.page ?? _selectedPage.toDouble()
-                                : _selectedPage.toDouble();
-                            final distance = (position - page).abs().clamp(
-                              0.0,
-                              1.0,
-                            );
-                            return Transform.scale(
-                              scale: 1 - distance * .16,
-                              child: child,
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: _CarouselArrow(
-                        label: 'Previous gallery photo',
-                        icon: Icons.chevron_left,
-                        onPressed: () => _move(-1),
+                            builder: (context, child) {
+                              final position =
+                                  _controller.hasClients &&
+                                      _controller.position.hasContentDimensions
+                                  ? _controller.page ?? _selectedPage.toDouble()
+                                  : _selectedPage.toDouble();
+                              final distance = (position - page).abs().clamp(
+                                0.0,
+                                1.0,
+                              );
+                              return Transform.scale(
+                                scale: 1 - distance * .16,
+                                child: child,
+                              );
+                            },
+                          );
+                        },
                       ),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: _CarouselArrow(
-                        label: 'Next gallery photo',
-                        icon: Icons.chevron_right,
-                        onPressed: () => _move(1),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: _CarouselArrow(
+                          label: 'Previous gallery photo',
+                          icon: Icons.chevron_left,
+                          onPressed: () => _move(-1),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: _CarouselArrow(
+                          label: 'Next gallery photo',
+                          icon: Icons.chevron_right,
+                          onPressed: () => _move(1),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-            _CarouselControls(
-              index: _photoIndex,
-              isPlaying: _isPlaying,
-              reducedMotion: _reducedMotion,
-              onTogglePlayback: _togglePlayback,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CarouselControls extends StatelessWidget {
-  const _CarouselControls({
-    required this.index,
-    required this.isPlaying,
-    required this.reducedMotion,
-    required this.onTogglePlayback,
-  });
-
-  final int index;
-  final bool isPlaying;
-  final bool reducedMotion;
-  final VoidCallback onTogglePlayback;
-
-  static const _buttonStyle = ButtonStyle(
-    minimumSize: WidgetStatePropertyAll(Size(48, 48)),
-    foregroundColor: WidgetStatePropertyAll(AppColors.forest),
-    side: WidgetStatePropertyAll(BorderSide(color: AppColors.line)),
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          '${(index + 1).toString().padLeft(2, '0')} / '
-          '${galleryPhotos.length.toString().padLeft(2, '0')}',
-          semanticsLabel:
-              'Gallery photo ${index + 1} of ${galleryPhotos.length}',
-          style: const TextStyle(
-            color: AppColors.forest,
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1.2,
+              const SizedBox(height: 24),
+              GalleryPagination(
+                selectedIndex: _photoIndex,
+                onSelected: _selectPhoto,
+              ),
+            ],
           ),
         ),
-        const Spacer(),
-        IconButton(
-          tooltip: reducedMotion
-              ? 'Autoplay off: reduced motion'
-              : isPlaying
-              ? 'Pause gallery autoplay'
-              : 'Play gallery autoplay',
-          onPressed: reducedMotion ? null : onTogglePlayback,
-          style: _buttonStyle,
-          icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow, size: 20),
-        ),
-      ],
+      ),
     );
   }
 }
