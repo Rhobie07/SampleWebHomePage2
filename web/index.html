@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="theme-color" content="#203b30">
+  <meta name="description" content="Find your place in Pahrump, Nevada with Marci Metzger and The Ridge Realty Group. Nearly three decades of real estate expertise for buyers, sellers, and investors.">
+  <meta property="og:title" content="Marci Metzger Homes | Your next chapter in Pahrump">
+  <meta property="og:description" content="Wide-open skies. A community that feels like home. Buy, sell, and find your next chapter in Southern Nevada.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/assets/images/hero.jpg">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Marci Metzger Homes">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="manifest" href="manifest.json">
+  <title>Marci Metzger Homes | Pahrump, Nevada</title>
+  <style>
+    html,body{margin:0;background:#f8f7f2;height:100%;overscroll-behavior-x:none}
+    #loading{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;color:#203b30;font:12px Arial,sans-serif;letter-spacing:2px}
+    #loading img{width:72px;height:72px;object-fit:contain}
+    #loading span{width:28px;height:1px;background:#637252;animation:pulse 1s ease-in-out infinite alternate}
+    @keyframes pulse{to{opacity:.2;transform:scaleX(.4)}}
+    @media(prefers-reduced-motion:reduce){#loading span{animation:none}}
+  </style>
+</head>
+<body>
+  <div id="loading" role="status" aria-label="Loading Marci Metzger Homes">
+    <img src="icons/Icon-192.png" alt="">
+    <div>YOUR NEXT CHAPTER AWAITS</div><span></span>
+  </div>
+  <noscript>This website requires JavaScript. Call Marci Metzger at <a href="tel:2069196886">(206) 919-6886</a> or email <a href="mailto:marcimetzger@gmail.com">marcimetzger@gmail.com</a>. The Ridge Realty Group, 3190 HW-160, Suite F, Pahrump, Nevada 89048. Open daily 8 am–7 pm.</noscript>
+  <script>window.addEventListener('flutter-first-frame',()=>document.getElementById('loading')?.remove());</script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
