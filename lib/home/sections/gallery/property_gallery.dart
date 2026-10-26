@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:marci_metzger_homes/home/sections/gallery/widgets/gallery_mosaic.dart';
+import 'package:marci_metzger_homes/home/sections/gallery/widgets/gallery_carousel.dart';
 import 'package:marci_metzger_homes/shared/animation/reveal.dart';
 import 'package:marci_metzger_homes/shared/layout/site_section.dart';
 import 'package:marci_metzger_homes/shared/theme/app_colors.dart';
@@ -30,7 +30,7 @@ class PropertyGallery extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 40),
-          const GalleryMosaic(),
+          const GalleryCarousel(),
           const SizedBox(height: 32),
           SiteButton(
             label: 'Picture yourself here? Let’s talk',

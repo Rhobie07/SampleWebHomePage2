@@ -70,7 +70,7 @@ lib/
 - Shared layout, colors, typography, buttons, images, and motion have focused libraries under `shared/`. Imports point directly to the needed library; there are no legacy forwarding files or barrel exports.
 - Stateful widgets keep their private `State` classes and controller disposal in the same file. Search state belongs to `HomeSearchForm`, contact state to `ContactForm`, and viewer state to the gallery widgets. No application-wide state framework is needed.
 
-- `assets/images/sources.json` records the source URLs for the original 21 homepage images and four social-logo assets. The social logos are transparent PNGs rasterized from the original website’s inline Facebook, Instagram, LinkedIn, and Yelp SVGs; no additional icon package or runtime download is needed. Gallery photographs are not represented as active listings.
+- `assets/images/sources.json` records the source URLs for the original 21 homepage images, four social-logo assets, and the Google Maps logo. Social logos are transparent PNGs rasterized from the original website’s inline SVGs. The Maps logo is Google's locally bundled product-page PNG; no icon package or runtime download is needed. Gallery photographs are not represented as active listings.
 - `assets/fonts/` contains locally hosted Cormorant Garamond and Manrope, including their SIL Open Font Licenses.
 - `design_preview/` preserves the visual-review concepts; it is not part of the deployed application.
 - `screenshots/` contains the implemented mobile, tablet, and desktop captures.
@@ -78,10 +78,11 @@ lib/
 ## Interaction contracts
 
 - Navigation scrolls to sections on the same page. The header changes to an opaque light surface after scrolling.
-- All seven gallery photographs open in a full-image viewer with next/previous controls, thumbnails, arrow-key navigation, and Escape to close.
+- The gallery is a cyclic carousel with a larger centered photo and smaller neighboring previews. It advances one photo every 10 seconds, smoothly sliding and scaling the incoming image. Previous/next controls, touch swipes, arrow keys, and pause/resume are available. Autoplay pauses during hover, keyboard focus, dragging, full-image viewing, or an inactive app. Reduced-motion preferences disable autoplay and make manual navigation immediate.
+- All seven gallery photographs still open in the full-image viewer, with next/previous controls, thumbnails, arrow-key navigation, and Escape to close. Opening or closing the viewer does not reset the user's playback choice.
 - Search retains the original location, type, sort, bedroom, bath, and price controls. It validates price ranges and prepares a criteria summary. **Browse current listings** opens Marci’s published Zillow profile; the form does not imply that its criteria filter Zillow. **Email my wish list** includes every selected criterion in an email draft.
 - Contact validates name, email, and message, then opens the user’s email app addressed to `marcimetzger@gmail.com`, as published on the original site’s [contact page](https://marcimetzger.com/lets-move). Nothing is sent until the visitor confirms in their email app. There is no server-side submission or message storage. The email address is also selectable for visitors without a configured mail app.
-- Phone, directions, Facebook, Instagram, LinkedIn, and Yelp destinations use the original business information.
+- Phone, directions, Facebook, Instagram, LinkedIn, and Yelp destinations use the original business information. **Get directions** displays the multicolor Google Maps logo instead of the generic arrow and opens the same business address in Google Maps.
 - Footer social destinations use branded, icon-only buttons with 48 × 48 touch targets, accessible tooltips, keyboard-focus feedback, and animated hover states. Each profile opens in a new tab.
 - The footer contains only the four social icons and the copyright beneath them, centered at every breakpoint. Branding, partner badges, footer navigation, and privacy controls are intentionally omitted.
 - No analytics or tracking cookies are loaded. There is no privacy popup or locally stored dismissal preference.
