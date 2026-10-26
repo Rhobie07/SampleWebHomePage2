@@ -52,8 +52,6 @@ class _CarouselViewportState extends State<_CarouselViewport>
   int _selectedPage = _photoCount;
   Timer? _timer;
   bool _isPlaying = true;
-  bool _isHovered = false;
-  bool _isFocused = false;
   bool _isDragging = false;
   bool _isMoving = false;
   bool _isLightboxOpen = false;
@@ -65,8 +63,6 @@ class _CarouselViewportState extends State<_CarouselViewport>
   bool get _canAutoplay =>
       _isPlaying &&
       !_reducedMotion &&
-      !_isHovered &&
-      !_isFocused &&
       !_isDragging &&
       !_isLightboxOpen &&
       _isAppActive;
@@ -212,83 +208,95 @@ class _CarouselViewportState extends State<_CarouselViewport>
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) {
-        _isHovered = true;
-        _syncTimer();
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.arrowLeft): () => _move(-1),
+        const SingleActivator(LogicalKeyboardKey.arrowRight): () => _move(1),
       },
-      onExit: (_) {
-        _isHovered = false;
-        _syncTimer();
-      },
-      child: CallbackShortcuts(
-        bindings: {
-          const SingleActivator(LogicalKeyboardKey.arrowLeft): () => _move(-1),
-          const SingleActivator(LogicalKeyboardKey.arrowRight): () => _move(1),
-        },
-        child: Focus(
-          onFocusChange: (focused) {
-            _isFocused = focused;
-            _syncTimer();
-          },
-          child: Column(
-            children: [
-              SizedBox(
-                height: widget.height,
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: _handleScroll,
-                  child: PageView.builder(
-                    controller: _controller,
-                    itemCount: _photoCount * 3,
-                    allowImplicitScrolling: true,
-                    onPageChanged: (page) =>
-                        setState(() => _selectedPage = page),
-                    itemBuilder: (context, page) {
-                      return AnimatedBuilder(
-                        animation: _controller,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Semantics(
-                            selected: page == _selectedPage,
-                            child: RepaintBoundary(
-                              child: GalleryPhotoTile(
-                                index: page % _photoCount,
-                                onOpen: () => _openPhoto(page % _photoCount),
+      child: Focus(
+        child: Column(
+          children: [
+            SizedBox(
+              height: widget.height,
+              child: Stack(
+                clipBehavior: Clip.none,
+                fit: StackFit.expand,
+                children: [
+                  NotificationListener<ScrollNotification>(
+                    onNotification: _handleScroll,
+                    child: PageView.builder(
+                      controller: _controller,
+                      itemCount: _photoCount * 3,
+                      allowImplicitScrolling: true,
+                      onPageChanged: (page) =>
+                          setState(() => _selectedPage = page),
+                      itemBuilder: (context, page) {
+                        return AnimatedBuilder(
+                          animation: _controller,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Semantics(
+                              selected: page == _selectedPage,
+                              child: RepaintBoundary(
+                                child: GalleryPhotoTile(
+                                  index: page % _photoCount,
+                                  onOpen: () => _openPhoto(page % _photoCount),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        builder: (context, child) {
-                          final position =
-                              _controller.hasClients &&
-                                  _controller.position.hasContentDimensions
-                              ? _controller.page ?? _selectedPage.toDouble()
-                              : _selectedPage.toDouble();
-                          final distance = (position - page).abs().clamp(
-                            0.0,
-                            1.0,
-                          );
-                          return Transform.scale(
-                            scale: 1 - distance * .16,
-                            child: child,
-                          );
-                        },
-                      );
-                    },
+                          builder: (context, child) {
+                            final position =
+                                _controller.hasClients &&
+                                    _controller.position.hasContentDimensions
+                                ? _controller.page ?? _selectedPage.toDouble()
+                                : _selectedPage.toDouble();
+                            final distance = (position - page).abs().clamp(
+                              0.0,
+                              1.0,
+                            );
+                            return Transform.scale(
+                              scale: 1 - distance * .16,
+                              child: child,
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
-                ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: _CarouselArrow(
+                        label: 'Previous gallery photo',
+                        icon: Icons.chevron_left,
+                        onPressed: () => _move(-1),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: _CarouselArrow(
+                        label: 'Next gallery photo',
+                        icon: Icons.chevron_right,
+                        onPressed: () => _move(1),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 24),
-              _CarouselControls(
-                index: _photoIndex,
-                isPlaying: _isPlaying,
-                reducedMotion: _reducedMotion,
-                onPrevious: () => _move(-1),
-                onNext: () => _move(1),
-                onTogglePlayback: _togglePlayback,
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 24),
+            _CarouselControls(
+              index: _photoIndex,
+              isPlaying: _isPlaying,
+              reducedMotion: _reducedMotion,
+              onTogglePlayback: _togglePlayback,
+            ),
+          ],
         ),
       ),
     );
@@ -300,16 +308,12 @@ class _CarouselControls extends StatelessWidget {
     required this.index,
     required this.isPlaying,
     required this.reducedMotion,
-    required this.onPrevious,
-    required this.onNext,
     required this.onTogglePlayback,
   });
 
   final int index;
   final bool isPlaying;
   final bool reducedMotion;
-  final VoidCallback onPrevious;
-  final VoidCallback onNext;
   final VoidCallback onTogglePlayback;
 
   static const _buttonStyle = ButtonStyle(
@@ -336,13 +340,6 @@ class _CarouselControls extends StatelessWidget {
         ),
         const Spacer(),
         IconButton(
-          tooltip: 'Previous gallery photo',
-          onPressed: onPrevious,
-          style: _buttonStyle,
-          icon: const Icon(Icons.arrow_back, size: 20),
-        ),
-        const SizedBox(width: 8),
-        IconButton(
           tooltip: reducedMotion
               ? 'Autoplay off: reduced motion'
               : isPlaying
@@ -352,14 +349,60 @@ class _CarouselControls extends StatelessWidget {
           style: _buttonStyle,
           icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow, size: 20),
         ),
-        const SizedBox(width: 8),
-        IconButton(
-          tooltip: 'Next gallery photo',
-          onPressed: onNext,
-          style: _buttonStyle,
-          icon: const Icon(Icons.arrow_forward, size: 20),
-        ),
       ],
+    );
+  }
+}
+
+class _CarouselArrow extends StatelessWidget {
+  const _CarouselArrow({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  static final _style = ButtonStyle(
+    minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+    fixedSize: const WidgetStatePropertyAll(Size(48, 48)),
+    shape: const WidgetStatePropertyAll(CircleBorder()),
+    foregroundColor: const WidgetStatePropertyAll(AppColors.forest),
+    backgroundColor: WidgetStateProperty.resolveWith(
+      (states) =>
+          states.contains(WidgetState.hovered) ? Colors.white : AppColors.cream,
+    ),
+    side: WidgetStateProperty.resolveWith(
+      (states) => BorderSide(
+        color: states.contains(WidgetState.focused)
+            ? AppColors.forest
+            : AppColors.line,
+        width: states.contains(WidgetState.focused) ? 2 : 1,
+      ),
+    ),
+    elevation: WidgetStateProperty.resolveWith(
+      (states) =>
+          states.contains(WidgetState.hovered) ||
+              states.contains(WidgetState.focused)
+          ? 6
+          : 3,
+    ),
+    shadowColor: const WidgetStatePropertyAll(Color(0x33000000)),
+    animationDuration: motionDuration,
+  );
+  static final _reducedStyle = _style.copyWith(
+    animationDuration: Duration.zero,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton.filled(
+      tooltip: label,
+      onPressed: onPressed,
+      style: reduceMotion(context) ? _reducedStyle : _style,
+      icon: Icon(icon, size: 26),
     );
   }
 }
