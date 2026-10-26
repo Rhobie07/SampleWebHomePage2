@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:marci_metzger_homes/shared/privacy/privacy_information.dart';
 
 class FooterLegal extends StatelessWidget {
-  const FooterLegal({super.key, required this.onBackToTop});
-  final VoidCallback onBackToTop;
+  const FooterLegal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,22 +32,6 @@ class FooterLegal extends StatelessWidget {
           child: const Text(
             'Privacy & cookies',
             style: TextStyle(fontSize: 11),
-          ),
-        ),
-        TextButton(
-          onPressed: onBackToTop,
-          style: TextButton.styleFrom(
-            foregroundColor: const Color(0xFFCDD8C4),
-            padding: EdgeInsets.zero,
-            minimumSize: const Size(48, 44),
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Back to top', style: TextStyle(fontSize: 11)),
-              SizedBox(width: 12),
-              Icon(Icons.north, size: 15),
-            ],
           ),
         ),
       ],

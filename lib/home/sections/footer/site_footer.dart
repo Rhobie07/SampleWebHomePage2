@@ -43,7 +43,7 @@ class SiteFooter extends StatelessWidget {
               const SizedBox(height: 32),
               Divider(height: 1, color: AppColors.cream.withValues(alpha: .18)),
               const SizedBox(height: 24),
-              FooterLegal(onBackToTop: () => onNavigate('home')),
+              const FooterLegal(),
             ],
           ),
         ),
