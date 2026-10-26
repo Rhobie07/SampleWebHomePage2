@@ -57,7 +57,7 @@ lib/
 - Shared layout, colors, typography, buttons, images, and motion have focused libraries under `shared/`. Imports point directly to the needed library; there are no legacy forwarding files or barrel exports.
 - Stateful widgets keep their private `State` classes and controller disposal in the same file. Search state belongs to `HomeSearchForm`, contact state to `ContactForm`, and viewer state to the gallery widgets. No application-wide state framework is needed.
 
-- `assets/images/sources.json` records the source URLs for all 21 downloaded homepage images. Gallery photographs are not represented as active listings.
+- `assets/images/sources.json` records the source URLs for the original 21 homepage images and four social-logo assets. The social logos are transparent PNGs rasterized from the original website’s inline Facebook, Instagram, LinkedIn, and Yelp SVGs; no additional icon package or runtime download is needed. Gallery photographs are not represented as active listings.
 - `assets/fonts/` contains locally hosted Cormorant Garamond and Manrope, including their SIL Open Font Licenses.
 - `design_preview/` preserves the visual-review concepts; it is not part of the deployed application.
 - `screenshots/` contains the implemented mobile, tablet, and desktop captures.
@@ -69,6 +69,7 @@ lib/
 - Search retains the original location, type, sort, bedroom, bath, and price controls. It validates price ranges and prepares a criteria summary. **Browse current listings** opens Marci’s published Zillow profile; the form does not imply that its criteria filter Zillow. **Email my wish list** includes every selected criterion in an email draft.
 - Contact validates name, email, and message, then opens the user’s email app addressed to `marcimetzger@gmail.com`, as published on the original site’s [contact page](https://marcimetzger.com/lets-move). Nothing is sent until the visitor confirms in their email app. There is no server-side submission or message storage. The email address is also selectable for visitors without a configured mail app.
 - Phone, directions, Facebook, Instagram, LinkedIn, and Yelp destinations use the original business information.
+- Footer social destinations use branded, icon-only buttons with 48 × 48 touch targets, accessible tooltips, keyboard-focus feedback, and animated hover states. Each profile opens in a new tab.
 - No analytics or tracking cookies are loaded. Only dismissal of the privacy notice is stored locally. The original cookie policy is available in the privacy dialog and explicitly distinguished from this redesign’s behavior.
 - Hover and focus states use stable dimensions, restrained shadows, and short transitions. System reduced-motion preferences disable movement and use immediate section navigation.
 - The sales volume and client counts are explicitly dated **2021**, not presented as current-year results.
