@@ -2,52 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:marci_metzger_homes/shared/layout/site_section.dart';
 import 'package:marci_metzger_homes/shared/theme/app_colors.dart';
 
-import 'widgets/footer_brand.dart';
-import 'widgets/footer_legal.dart';
-import 'widgets/footer_navigation.dart';
 import 'widgets/footer_social_links.dart';
-import 'widgets/partner_badges.dart';
 
 class SiteFooter extends StatelessWidget {
-  const SiteFooter({super.key, required this.onNavigate});
-  final ValueChanged<String> onNavigate;
+  const SiteFooter({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final mobile = width < 900;
-    return Column(
-      children: [
-        SiteSection(verticalPadding: 40, child: const PartnerBadges()),
-        SiteSection(
-          color: AppColors.forest,
-          verticalPadding: mobile ? 48 : 64,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (mobile) ...[
-                const FooterBrand(),
-                const SizedBox(height: 32),
-                FooterNavigation(onNavigate: onNavigate),
-              ] else
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Expanded(child: FooterBrand()),
-                    const SizedBox(width: 48),
-                    Expanded(child: FooterNavigation(onNavigate: onNavigate)),
-                  ],
-                ),
-              const SizedBox(height: 40),
-              const FooterSocialLinks(),
-              const SizedBox(height: 32),
-              Divider(height: 1, color: AppColors.cream.withValues(alpha: .18)),
-              const SizedBox(height: 24),
-              const FooterLegal(),
-            ],
+    final mobile = MediaQuery.sizeOf(context).width < 900;
+    return SiteSection(
+      color: AppColors.forest,
+      verticalPadding: mobile ? 48 : 64,
+      child: const Column(
+        children: [
+          FooterSocialLinks(),
+          SizedBox(height: 24),
+          Text(
+            '© 2026 MARCI METZGER. ALL RIGHTS RESERVED.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 11,
+              height: 1.6,
+              letterSpacing: .8,
+              color: Color(0xFFB7C7AE),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

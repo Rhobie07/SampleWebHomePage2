@@ -154,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                     onContact: () => _goTo('contact'),
                   ),
                   ContactSection(key: _anchors['contact']),
-                  SiteFooter(onNavigate: _goTo),
+                  const SiteFooter(),
                 ],
               ),
             ),

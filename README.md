@@ -61,7 +61,6 @@ lib/
     ├── animation/
     ├── layout/
     ├── navigation/
-    ├── privacy/
     ├── theme/
     └── widgets/
 ```
@@ -84,8 +83,8 @@ lib/
 - Contact validates name, email, and message, then opens the user’s email app addressed to `marcimetzger@gmail.com`, as published on the original site’s [contact page](https://marcimetzger.com/lets-move). Nothing is sent until the visitor confirms in their email app. There is no server-side submission or message storage. The email address is also selectable for visitors without a configured mail app.
 - Phone, directions, Facebook, Instagram, LinkedIn, and Yelp destinations use the original business information.
 - Footer social destinations use branded, icon-only buttons with 48 × 48 touch targets, accessible tooltips, keyboard-focus feedback, and animated hover states. Each profile opens in a new tab.
-- The footer legal row contains only copyright and **Privacy & cookies**. The header logo remains available to return to the top.
-- No analytics or tracking cookies are loaded. First visits show no automatic privacy notice, and no dismissal preference is stored. The footer’s **Privacy & cookies** link opens the original cookie policy on demand, explicitly distinguished from this redesign’s behavior.
+- The footer contains only the four social icons and the copyright beneath them, centered at every breakpoint. Branding, partner badges, footer navigation, and privacy controls are intentionally omitted.
+- No analytics or tracking cookies are loaded. There is no privacy popup or locally stored dismissal preference.
 - Hover and focus states use stable dimensions, restrained shadows, and short transitions. System reduced-motion preferences disable movement and use immediate section navigation.
 - The sales volume and client counts are explicitly dated **2021**, not presented as current-year results.
 
