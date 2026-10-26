@@ -23,5 +23,11 @@
   "social-facebook.png": "https://marcimetzger.com/",
   "social-instagram.png": "https://marcimetzger.com/",
   "social-linkedin.png": "https://marcimetzger.com/",
-  "social-yelp.png": "https://marcimetzger.com/"
+  "social-yelp.png": "https://marcimetzger.com/",
+  "google-maps.png": {
+    "source": "https://www.gstatic.com/marketing-cms/assets/images/81/e4/1bdb808b40a28cc70ac24bf5e6fa/google-maps-favicon.png=s180",
+    "sourcePage": "https://www.google.com/maps/about/",
+    "description": "Official multicolor Google Maps pin, published as the product page's 180px apple-touch icon; downloaded unchanged.",
+    "retrieved": "2026-10-26"
+  }
 }

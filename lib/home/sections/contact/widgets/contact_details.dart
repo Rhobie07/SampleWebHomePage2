@@ -60,6 +60,13 @@ class ContactDetails extends StatelessWidget {
         SiteButton(
           label: 'Get directions',
           kind: SiteButtonKind.text,
+          trailingIcon: Image.asset(
+            'assets/images/google-maps.png',
+            width: 24,
+            height: 24,
+            fit: BoxFit.contain,
+            excludeFromSemantics: true,
+          ),
           onPressed: () => openSiteUrl(
             context,
             Uri.https('www.google.com', '/maps/search/', {

@@ -10,12 +10,16 @@ class SiteButton extends StatefulWidget {
     required this.onPressed,
     this.kind = SiteButtonKind.primary,
     this.icon = Icons.north_east,
+    this.trailingIcon,
     this.expand = false,
   });
   final String label;
   final VoidCallback onPressed;
   final SiteButtonKind kind;
   final IconData? icon;
+
+  /// Replaces [icon] when supplied, retaining the trailing icon's feedback.
+  final Widget? trailingIcon;
   final bool expand;
 
   @override
@@ -119,12 +123,14 @@ class _SiteButtonState extends State<SiteButton> {
                       ),
                     ),
                   ),
-                  if (widget.icon != null) ...[
+                  if (widget.trailingIcon != null || widget.icon != null) ...[
                     SizedBox(width: isText ? 20 : 28),
                     AnimatedSlide(
                       duration: duration,
                       offset: active ? const Offset(.12, -.12) : Offset.zero,
-                      child: Icon(widget.icon, size: 19, color: foreground),
+                      child:
+                          widget.trailingIcon ??
+                          Icon(widget.icon, size: 19, color: foreground),
                     ),
                   ],
                 ],
