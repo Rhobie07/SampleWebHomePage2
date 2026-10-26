@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:marci_metzger_homes/shared/privacy/cookie_notice.dart';
+import 'package:marci_metzger_homes/shared/privacy/privacy_information.dart';
 
 class FooterLegal extends StatelessWidget {
   const FooterLegal({super.key, required this.onBackToTop});

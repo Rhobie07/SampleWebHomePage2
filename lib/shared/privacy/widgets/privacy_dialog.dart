@@ -26,7 +26,6 @@ class PrivacyDialog extends StatelessWidget {
             children: [
               Text(
                 'This website does not run analytics or set tracking cookies. '
-                'Your privacy-notice preference is saved only in your browser. '
                 'Contact messages are prepared in your email app, not stored here.',
               ),
               SizedBox(height: 24),

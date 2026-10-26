@@ -5,7 +5,6 @@ import 'package:marci_metzger_homes/home/sections/hero/hero_section.dart';
 import 'package:marci_metzger_homes/home/sections/highlights/sales_highlights_section.dart';
 
 import '../shared/animation/motion.dart';
-import '../shared/privacy/cookie_notice.dart';
 import 'sections/about/about_section.dart';
 import 'sections/contact/contact_section.dart';
 import 'sections/footer/site_footer.dart';
@@ -170,12 +169,6 @@ class _HomePageState extends State<HomePage> {
               onNavigate: _goTo,
               onMenu: _openMenu,
             ),
-          ),
-          const Positioned(
-            bottom: 20,
-            left: 16,
-            right: 16,
-            child: CookieNotice(),
           ),
         ],
       ),
