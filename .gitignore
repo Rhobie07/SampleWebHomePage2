@@ -1,6 +1,8 @@
 # Miscellaneous
 *.class
 *.lock
+# CI requires the Flutter application's dependency lockfile.
+!/pubspec.lock
 *.log
 *.pyc
 *.swp
