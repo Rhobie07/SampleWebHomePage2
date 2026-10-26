@@ -40,10 +40,10 @@ class _NavigationLinkState extends State<NavigationLink> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             AnimatedContainer(
               duration: reduceMotion(context) ? Duration.zero : motionDuration,
-              width: _hover ? 22 : 4,
+              width: _hover ? 32 : 20,
               height: 2,
               decoration: BoxDecoration(
                 color: widget.isActive || _hover
